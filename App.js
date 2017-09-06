@@ -1,21 +1,12 @@
 import React from 'react';
+import AppNavigator from './src/Navigators/AppNavigator';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default class App extends React.Component {
   render() {
     return (
-      <View style={styles.container}>
-        <Text>Leftovers app</Text>
-      </View>
+      <AppNavigator />
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

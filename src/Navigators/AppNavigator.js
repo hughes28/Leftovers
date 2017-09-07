@@ -10,13 +10,13 @@ export default class AppNavigator extends React.Component {
       navigationOptions: {title: 'LEFTOVERS'}
     });
     return (
-      <AppNavigator style={styles.container} />
+      <AppNavigator style={styles.titleBar} />
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
+  titleBar: {
     paddingTop: 20
   },
 });

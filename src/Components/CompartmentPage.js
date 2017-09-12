@@ -1,6 +1,7 @@
 import React from 'react';
-import { Button, Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Button, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import PopupDialog from 'react-native-popup-dialog';
+import DatePicker from 'react-native-datepicker';
 
 export default class CompartmentPage extends React.Component {
   
@@ -20,13 +21,71 @@ export default class CompartmentPage extends React.Component {
   });
 
   render() {
+    const itemName = (
+      <View>
+        <Text>Item Name:</Text>
+        <TextInput
+          style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+          onChangeText={(itemName) => this.setState({itemName})}
+          value={this.state.itemName}
+        />
+      </View>    
+      )
+    const purchaseDatePicker = (
+      <View>
+        <Text>Purchase Date</Text>
+        <DatePicker 
+          style={styles.datePicker}
+          date={this.state.purchaseDate}
+          mode="date"
+          placeholder="select date"
+          format="LL"
+          androidMode='spinner'
+          confirmBtnText="Confirm"
+          cancelBtnText="Cancel"
+          customStyles={{
+            dateIcon: styles.dateIcon,
+            dateInput: styles.dateInput,
+            // ... You can check the source to find the other keys.
+          }}
+          onDateChange={(purchaseDate) => {this.setState({purchaseDate: purchaseDate})}}
+        />
+      </View>
+    );
+    let expiringDatePicker = null;
+    if (this.state.purchaseDate !== undefined) {
+      expiringDatePicker = (
+        <View>
+          <Text>Expiration Date</Text>
+          <DatePicker 
+            style={styles.datePicker}
+            date={this.state.expirationDate}
+            mode="date"
+            minDate={this.state.purchaseDate}
+            placeholder="select date"
+            format="LL"
+            androidMode='spinner'
+            confirmBtnText="Confirm"
+            cancelBtnText="Cancel"
+            customStyles={{
+              dateIcon: styles.dateIcon,
+              dateInput: styles.dateInput,
+              // ... You can check the source to find the other keys.
+            }}
+            onDateChange={(expirationDate) => {this.setState({expirationDate: expirationDate})}}
+          />
+        </View>
+      );
+    }
     return (
       <View style={styles.container}>
         <PopupDialog
           ref={(popupDialog) => { this.popupDialog = popupDialog; }}
         >
           <View style={styles.popup}>
-            <Text>Hello</Text>
+            {itemName}
+            {purchaseDatePicker}
+            {expiringDatePicker}
           </View>
         </PopupDialog>
         <ScrollView>
@@ -57,5 +116,17 @@ const styles = StyleSheet.create({
   addItemButton: {
     position: 'absolute',
     bottom: 0
-  }
+  },
+  datePicker: {
+    width: 200,
+  },
+  dateIcon: {
+    position: 'absolute',
+    left: 0,
+    top: 4,
+    marginLeft: 0
+  },
+  dateInput: {
+    marginLeft: 36
+  },
 });

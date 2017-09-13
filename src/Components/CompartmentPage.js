@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { AsyncStorage, Button, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import PopupDialog from 'react-native-popup-dialog';
 import DatePicker from 'react-native-datepicker';
 
@@ -7,6 +7,7 @@ export default class CompartmentPage extends React.Component {
   
   constructor() {
     super();
+    this.getItem();
     this.state = {
       modalVisible: false,
     }
@@ -19,6 +20,28 @@ export default class CompartmentPage extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     title: `${navigation.state.params.compartment}`,
   });
+
+  async addItem() {
+    try {
+      await AsyncStorage.setItem('Counter Top', JSON.stringify(this.state));
+    } catch (error) {
+    // Error saving data
+    }
+  }
+
+  async getItem() {
+    try {
+      const value = await AsyncStorage.getItem('Counter Top');
+      if (value !== null){
+        // We have data!!
+        const currentItems = JSON.parse(value);
+        console.log(value);
+        this.setState({currentItems});
+      }
+    } catch (error) {
+      // Error retrieving data
+    }
+  }
 
   render() {
     const itemName = (
@@ -77,6 +100,29 @@ export default class CompartmentPage extends React.Component {
         </View>
       );
     }
+    let popupAddButton = null;
+    if (this.state.itemName && this.state.purchaseDate && this.state.expirationDate) {
+      popupAddButton = (
+        <Button 
+          style={styles.addItemButton}
+          title="Add"
+          onPress={() => {
+            this.addItem();
+          }}
+        />
+      )
+    }
+    let currentItemEntries = null;
+    const currentList = this.state.currentItems;
+    if (currentList) {
+      currentItemEntries = (
+        <View style={styles.currentItems}>
+          <Text style={{color: 'black'}}> Item: {currentList.itemName} </Text>
+          <Text> Purchase Date: {currentList.purchaseDate} </Text>
+          <Text> Expiration Date: {currentList.expirationDate} </Text>
+        </View>
+      )
+    }
     return (
       <View style={styles.container}>
         <PopupDialog
@@ -87,9 +133,12 @@ export default class CompartmentPage extends React.Component {
             {purchaseDatePicker}
             {expiringDatePicker}
           </View>
+          <View>
+            {popupAddButton}
+          </View>
         </PopupDialog>
         <ScrollView>
-
+          {currentItemEntries}
         </ScrollView>
         <Button 
           style={styles.addItemButton}
@@ -128,5 +177,8 @@ const styles = StyleSheet.create({
   },
   dateInput: {
     marginLeft: 36
+  },
+  currentItems: {
+    marginTop: 50,
   },
 });

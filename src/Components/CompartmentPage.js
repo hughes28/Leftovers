@@ -10,6 +10,7 @@ export default class CompartmentPage extends React.Component {
     this.getItem();
     this.state = {
       modalVisible: false,
+      newItem: {},
     }
   }
 
@@ -23,7 +24,8 @@ export default class CompartmentPage extends React.Component {
 
   async addItem() {
     try {
-      await AsyncStorage.setItem('Counter Top', JSON.stringify(this.state));
+      await AsyncStorage.setItem('Counter Top', JSON.stringify(this.state.newItem));
+      this.setState({newItem: {}});
     } catch (error) {
     // Error saving data
     }
@@ -49,8 +51,12 @@ export default class CompartmentPage extends React.Component {
         <Text>Item Name:</Text>
         <TextInput
           style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-          onChangeText={(itemName) => this.setState({itemName})}
-          value={this.state.itemName}
+          onChangeText={(itemName) => {
+            const newItem = {...this.state.newItem}; // notation for clone
+            newItem.itemName = itemName;
+            this.setState({newItem: newItem});
+          }}
+          value={this.state.newItem.itemName}
         />
       </View>    
       )
@@ -59,7 +65,7 @@ export default class CompartmentPage extends React.Component {
         <Text>Purchase Date</Text>
         <DatePicker 
           style={styles.datePicker}
-          date={this.state.purchaseDate}
+          date={this.state.newItem.purchaseDate}
           mode="date"
           placeholder="select date"
           format="LL"
@@ -71,20 +77,24 @@ export default class CompartmentPage extends React.Component {
             dateInput: styles.dateInput,
             // ... You can check the source to find the other keys.
           }}
-          onDateChange={(purchaseDate) => {this.setState({purchaseDate: purchaseDate})}}
+          onDateChange={(purchaseDate) => {
+            const newItem = {...this.state.newItem}; // notation for clone
+              newItem.purchaseDate = purchaseDate;
+              this.setState({newItem: newItem});
+          }}
         />
       </View>
     );
     let expiringDatePicker = null;
-    if (this.state.purchaseDate !== undefined) {
+    if (this.state.newItem.purchaseDate !== undefined) {
       expiringDatePicker = (
         <View>
           <Text>Expiration Date</Text>
           <DatePicker 
             style={styles.datePicker}
-            date={this.state.expirationDate}
+            date={this.state.newItem.expirationDate}
             mode="date"
-            minDate={this.state.purchaseDate}
+            minDate={this.state.newItem.purchaseDate}
             placeholder="select date"
             format="LL"
             androidMode='spinner'
@@ -95,13 +105,17 @@ export default class CompartmentPage extends React.Component {
               dateInput: styles.dateInput,
               // ... You can check the source to find the other keys.
             }}
-            onDateChange={(expirationDate) => {this.setState({expirationDate: expirationDate})}}
+            onDateChange={(expirationDate) => {
+              const newItem = {...this.state.newItem}; // notation for clone
+              newItem.expirationDate = expirationDate;
+              this.setState({newItem: newItem});
+            }}
           />
         </View>
       );
     }
     let popupAddButton = null;
-    if (this.state.itemName && this.state.purchaseDate && this.state.expirationDate) {
+    if (this.state.newItem.itemName && this.state.newItem.purchaseDate && this.state.newItem.expirationDate) {
       popupAddButton = (
         <Button 
           style={styles.addItemButton}

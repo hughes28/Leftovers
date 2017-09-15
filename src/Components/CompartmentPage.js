@@ -1,5 +1,5 @@
 import React from 'react';
-import { AsyncStorage, Button, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { AsyncStorage, Button, FlatList, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import PopupDialog from 'react-native-popup-dialog';
 import DatePicker from 'react-native-datepicker';
 
@@ -11,6 +11,7 @@ export default class CompartmentPage extends React.Component {
     this.state = {
       modalVisible: false,
       newItem: {},
+      itemList: [],
     }
   }
 
@@ -24,7 +25,9 @@ export default class CompartmentPage extends React.Component {
 
   async addItem() {
     try {
-      await AsyncStorage.setItem('Counter Top', JSON.stringify(this.state.newItem));
+      const newItem = {...this.state.newItem};
+      newItem.key = Math.random();
+      await AsyncStorage.setItem('Counter Top', JSON.stringify([newItem]));
       this.setState({newItem: {}});
     } catch (error) {
     // Error saving data
@@ -130,12 +133,17 @@ export default class CompartmentPage extends React.Component {
     const currentList = this.state.currentItems;
     if (currentList) {
       currentItemEntries = (
-        <View style={styles.currentItems}>
-          <Text style={{color: 'black'}}> Item: {currentList.itemName} </Text>
-          <Text> Purchase Date: {currentList.purchaseDate} </Text>
-          <Text> Expiration Date: {currentList.expirationDate} </Text>
-        </View>
-      )
+        <FlatList
+          data={currentList}
+          renderItem={({item}) => (
+            <View style={styles.currentItems}>
+              <Text> Item: {item.itemName} </Text>
+              <Text> Purchase Date: {item.purchaseDate} </Text>
+              <Text> Expiration Date: {item.expirationDate} </Text>
+            </View>
+          )}
+        />
+      );
     }
     return (
       <View style={styles.container}>

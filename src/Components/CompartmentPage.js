@@ -5,9 +5,9 @@ import DatePicker from 'react-native-datepicker';
 
 export default class CompartmentPage extends React.Component {
   
-  constructor() {
-    super();
-    this.getItem();
+  constructor(props) {
+    super(props);
+    this.getItem(props);
     this.addItem = this.addItem.bind(this);
     this.state = {
       newItem: {},
@@ -21,11 +21,12 @@ export default class CompartmentPage extends React.Component {
 
   async addItem() {
     try {
+      const title = this.props.navigation.state.params.compartment;
       const newItem = {...this.state.newItem};
       newItem.key = Math.random();
       const currentItems = [...this.state.currentItems];
       currentItems.push(newItem);
-      await AsyncStorage.setItem('Counter Top', JSON.stringify(currentItems));
+      await AsyncStorage.setItem(title, JSON.stringify(currentItems));
       this.popupDialog.dismiss();
       this.setState({
         newItem: {},
@@ -37,9 +38,10 @@ export default class CompartmentPage extends React.Component {
     }
   }
 
-  async getItem() {
+  async getItem(props) {
     try {
-      const value = await AsyncStorage.getItem('Counter Top');
+      const title = props.navigation.state.params.compartment;
+      const value = await AsyncStorage.getItem(title);
       if (value !== null){
         // We have data!!
         const currentItems = JSON.parse(value);

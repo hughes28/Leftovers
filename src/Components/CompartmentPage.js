@@ -1,5 +1,5 @@
 import React from 'react';
-import { AsyncStorage, Button, FlatList, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { AsyncStorage, Button, FlatList, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import PopupDialog from 'react-native-popup-dialog';
 import DatePicker from 'react-native-datepicker';
 
@@ -8,15 +8,11 @@ export default class CompartmentPage extends React.Component {
   constructor() {
     super();
     this.getItem();
+    this.addItem = this.addItem.bind(this);
     this.state = {
-      modalVisible: false,
       newItem: {},
-      itemList: [],
+      currentItems: [],
     }
-  }
-
-  setModalVisible(visible) {
-    this.setState({modalVisible: visible});
   }
 
   static navigationOptions = ({ navigation }) => ({
@@ -27,9 +23,16 @@ export default class CompartmentPage extends React.Component {
     try {
       const newItem = {...this.state.newItem};
       newItem.key = Math.random();
-      await AsyncStorage.setItem('Counter Top', JSON.stringify([newItem]));
-      this.setState({newItem: {}});
+      const currentItems = [...this.state.currentItems];
+      currentItems.push(newItem);
+      await AsyncStorage.setItem('Counter Top', JSON.stringify(currentItems));
+      this.popupDialog.dismiss();
+      this.setState({
+        newItem: {},
+        currentItems: currentItems,
+      });
     } catch (error) {
+      throw error
     // Error saving data
     }
   }

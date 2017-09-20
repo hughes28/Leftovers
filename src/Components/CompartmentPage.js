@@ -140,13 +140,26 @@ export default class CompartmentPage extends React.Component {
       currentItemEntries = (
         <FlatList
           data={currentList}
-          renderItem={({item}) => (
-            <View style={styles.currentItems}>
-              <Text> Item: {item.itemName} </Text>
-              <Text> Purchase Date: {item.purchaseDate} </Text>
-              <Text> Expiration Date: {item.expirationDate} </Text>
-            </View>
-          )}
+          renderItem={({item}) => { 
+            const date1 = new Date();
+            const date2 = new Date(item.expirationDate);
+            let diffDays = date2.getDate() - date1.getDate();
+            let timeLeft = `${diffDays} day(s) until expiration.`;
+            if (diffDays === 0) {
+              timeLeft = "Expires today.";
+            }
+            else if (diffDays < 0) {
+              timeLeft = `Expired ${-diffDays} day(s) ago.`;
+            }
+            return (
+              <View style={styles.currentItems}>
+                <Text> Item: {item.itemName} </Text>
+                <Text> Purchase Date: {item.purchaseDate} </Text>
+                <Text> Expiration Date: {item.expirationDate} </Text>
+                <Text> {timeLeft} </Text>
+              </View>
+            );
+          }}
         />
       );
     }

@@ -4,7 +4,7 @@ import PopupDialog from 'react-native-popup-dialog';
 import DatePicker from 'react-native-datepicker';
 
 export default class CompartmentPage extends React.Component {
-  
+
   constructor(props) {
     super(props);
     this.getItem(props);
@@ -66,12 +66,12 @@ export default class CompartmentPage extends React.Component {
           }}
           value={this.state.newItem.itemName}
         />
-      </View>    
+      </View>
       )
     const purchaseDatePicker = (
       <View>
         <Text>Purchase Date</Text>
-        <DatePicker 
+        <DatePicker
           style={styles.datePicker}
           date={this.state.newItem.purchaseDate}
           mode="date"
@@ -98,7 +98,7 @@ export default class CompartmentPage extends React.Component {
       expiringDatePicker = (
         <View>
           <Text>Expiration Date</Text>
-          <DatePicker 
+          <DatePicker
             style={styles.datePicker}
             date={this.state.newItem.expirationDate}
             mode="date"
@@ -125,7 +125,7 @@ export default class CompartmentPage extends React.Component {
     let popupAddButton = null;
     if (this.state.newItem.itemName && this.state.newItem.purchaseDate && this.state.newItem.expirationDate) {
       popupAddButton = (
-        <Button 
+        <Button
           style={styles.addItemButton}
           title="Add"
           onPress={() => {
@@ -140,10 +140,10 @@ export default class CompartmentPage extends React.Component {
       currentItemEntries = (
         <FlatList
           data={currentList}
-          renderItem={({item}) => { 
+          renderItem={({item}) => {
             const date1 = new Date();
             const date2 = new Date(item.expirationDate);
-            let diffDays = date2.getDate() - date1.getDate();
+            let diffDays = Math.floor((date2.getTime() - date1.getTime())/(24*3600*1000));
             let timeLeft = `${diffDays} day(s) until expiration.`;
             if (diffDays === 0) {
               timeLeft = "Expires today.";
@@ -180,7 +180,7 @@ export default class CompartmentPage extends React.Component {
         <ScrollView>
           {currentItemEntries}
         </ScrollView>
-        <Button 
+        <Button
           style={styles.addItemButton}
           title="Add new item"
           onPress={() => {

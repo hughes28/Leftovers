@@ -167,6 +167,14 @@ export default class CompartmentPage extends React.Component {
                 backgroundColor: '#F99526',
               },
               {
+                text: 'Consume',
+                color: '#000000',
+                backgroundColor: '#A6E22E',
+                onPress: () => {
+                  this.deleteItem(index);
+                }
+              },
+              {
                 text: 'Delete',
                 color: '#FFFFFF',
                 backgroundColor: '#F92672',
@@ -192,6 +200,11 @@ export default class CompartmentPage extends React.Component {
                   <Text> Purchase Date: {item.purchaseDate} </Text>
                   <Text> Expiration Date: {item.expirationDate} </Text>
                   <Text> {timeLeft} </Text>
+                  <TouchableOpacity
+                    onPress={() => {this.deleteItem(index)}}
+                  >
+                    <Text>Consume</Text>
+                  </TouchableOpacity>
                 </View>
               </Swipeout>
             );

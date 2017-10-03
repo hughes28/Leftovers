@@ -1,6 +1,7 @@
 import React from 'react';
 import { AsyncStorage, Button, FlatList, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import PopupDialog from 'react-native-popup-dialog';
+import Swipeout from 'react-native-swipeout';
 import DatePicker from 'react-native-datepicker';
 
 export default class CompartmentPage extends React.Component {
@@ -38,6 +39,22 @@ export default class CompartmentPage extends React.Component {
     }
   }
 
+  async deleteItem(index) {
+    try {
+      const title = this.props.navigation.state.params.compartment;
+      const currentItems = [...this.state.currentItems];
+      currentItems.splice(index, 1);
+      await AsyncStorage.setItem(title, JSON.stringify(currentItems));
+      this.setState({
+        newItem: {},
+        currentItems: currentItems,
+      });
+    } catch (error) {
+      throw error
+    // Error saving data
+    }
+  }
+
   async getItem(props) {
     try {
       const title = props.navigation.state.params.compartment;
@@ -54,6 +71,7 @@ export default class CompartmentPage extends React.Component {
   }
 
   render() {
+
     const itemName = (
       <View>
         <Text>Item Name:</Text>
@@ -75,6 +93,7 @@ export default class CompartmentPage extends React.Component {
           style={styles.datePicker}
           date={this.state.newItem.purchaseDate}
           mode="date"
+          maxDate={new Date()}
           placeholder="select date"
           format="LL"
           androidMode='spinner'
@@ -140,10 +159,25 @@ export default class CompartmentPage extends React.Component {
       currentItemEntries = (
         <FlatList
           data={currentList}
-          renderItem={({item}) => {
+          renderItem={({item, index}) => {
+            const swipeoutBtns = [
+              {
+                text: 'Edit',
+                color: '#FFFFFF',
+                backgroundColor: '#F99526',
+              },
+              {
+                text: 'Delete',
+                color: '#FFFFFF',
+                backgroundColor: '#F92672',
+                onPress: () => {
+                  this.deleteItem(index);
+                }
+              },
+            ];
             const date1 = new Date();
             const date2 = new Date(item.expirationDate);
-            let diffDays = Math.floor((date2.getTime() - date1.getTime())/(24*3600*1000));
+            let diffDays = Math.floor((date2.getTime() - date1.getTime())/(24*3600*1000))+1;
             let timeLeft = `${diffDays} day(s) until expiration.`;
             if (diffDays === 0) {
               timeLeft = "Expires today.";
@@ -152,12 +186,14 @@ export default class CompartmentPage extends React.Component {
               timeLeft = `Expired ${-diffDays} day(s) ago.`;
             }
             return (
-              <View style={styles.currentItems}>
-                <Text> Item: {item.itemName} </Text>
-                <Text> Purchase Date: {item.purchaseDate} </Text>
-                <Text> Expiration Date: {item.expirationDate} </Text>
-                <Text> {timeLeft} </Text>
-              </View>
+              <Swipeout style={styles.currentItems} right={swipeoutBtns}>
+                <View>
+                  <Text> Item: {item.itemName} </Text>
+                  <Text> Purchase Date: {item.purchaseDate} </Text>
+                  <Text> Expiration Date: {item.expirationDate} </Text>
+                  <Text> {timeLeft} </Text>
+                </View>
+              </Swipeout>
             );
           }}
         />

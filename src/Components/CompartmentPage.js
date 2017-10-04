@@ -12,6 +12,7 @@ export default class CompartmentPage extends React.Component {
     this.addItem = this.addItem.bind(this);
     this.state = {
       newItem: {},
+      curItem: {},
       currentItems: [],
     }
   }
@@ -55,6 +56,27 @@ export default class CompartmentPage extends React.Component {
     }
   }
 
+  async editItem() {
+    try {
+      const title = this.props.navigation.state.params.compartment;
+      const currentItems = [...this.state.currentItems];
+      const editingIndex = this.state.editingIndex;
+      const curIndexData = currentItems[editingIndex];
+      curIndexData.itemName = this.state.curItem.itemName;
+      curIndexData.purchaseDate = this.state.curItem.purchaseDate;
+      curIndexData.expirationDate = this.state.curItem.expirationDate;
+      await AsyncStorage.setItem(title, JSON.stringify(currentItems));
+      this.popupDialog.dismiss();
+      this.setState({
+        curItem: {},
+        currentItems: currentItems,
+      });
+    } catch (error) {
+      throw error
+    // Error saving data
+    }
+  }
+
   async getItem(props) {
     try {
       const title = props.navigation.state.params.compartment;
@@ -78,11 +100,19 @@ export default class CompartmentPage extends React.Component {
         <TextInput
           style={{height: 40, borderColor: 'gray', borderWidth: 1}}
           onChangeText={(itemName) => {
-            const newItem = {...this.state.newItem}; // notation for clone
-            newItem.itemName = itemName;
-            this.setState({newItem: newItem});
+            if (this.state.editingIndex === undefined) {
+              const newItem = {...this.state.newItem}; // notation for clone
+              newItem.itemName = itemName;
+              this.setState({newItem: newItem});
+            } else {
+              const curItem = {...this.state.curItem}; // notation for clone
+              curItem.itemName = itemName;
+              this.setState({curItem: curItem});
+            } 
           }}
-          value={this.state.newItem.itemName}
+          value={
+            this.state.editingIndex === undefined ? this.state.newItem.itemName : this.state.curItem.itemName
+          }
         />
       </View>
       )
@@ -91,7 +121,9 @@ export default class CompartmentPage extends React.Component {
         <Text>Purchase Date</Text>
         <DatePicker
           style={styles.datePicker}
-          date={this.state.newItem.purchaseDate}
+          date={
+            this.state.editingIndex === undefined ? this.state.newItem.purchaseDate : this.state.curItem.purchaseDate
+          }
           mode="date"
           maxDate={new Date()}
           placeholder="select date"
@@ -105,23 +137,33 @@ export default class CompartmentPage extends React.Component {
             // ... You can check the source to find the other keys.
           }}
           onDateChange={(purchaseDate) => {
-            const newItem = {...this.state.newItem}; // notation for clone
+            if (this.state.editingIndex === undefined) {
+              const newItem = {...this.state.newItem}; // notation for clone
               newItem.purchaseDate = purchaseDate;
               this.setState({newItem: newItem});
+            } else {
+              const curItem = {...this.state.curItem}; // notation for clone
+              curItem.purchaseDate = purchaseDate;
+              this.setState({curItem: curItem});
+            } 
           }}
         />
       </View>
     );
     let expiringDatePicker = null;
-    if (this.state.newItem.purchaseDate !== undefined) {
+    if (this.state.newItem.purchaseDate !== undefined || this.state.curItem.purchaseDate !== undefined) {
       expiringDatePicker = (
         <View>
           <Text>Expiration Date</Text>
           <DatePicker
             style={styles.datePicker}
-            date={this.state.newItem.expirationDate}
+            date={
+              this.state.editingIndex === undefined ? this.state.newItem.expirationDate : this.state.curItem.expirationDate
+            }
             mode="date"
-            minDate={this.state.newItem.purchaseDate}
+            minDate={
+              this.state.editingIndex === undefined ? this.state.newItem.purchaseDate : this.state.curItem.purchaseDate
+            }
             placeholder="select date"
             format="LL"
             androidMode='spinner'
@@ -133,16 +175,22 @@ export default class CompartmentPage extends React.Component {
               // ... You can check the source to find the other keys.
             }}
             onDateChange={(expirationDate) => {
-              const newItem = {...this.state.newItem}; // notation for clone
-              newItem.expirationDate = expirationDate;
-              this.setState({newItem: newItem});
+              if (this.state.editingIndex === undefined) {
+                const newItem = {...this.state.newItem}; // notation for clone
+                newItem.expirationDate = expirationDate;
+                this.setState({newItem: newItem});
+              } else {
+                const curItem = {...this.state.curItem}; // notation for clone
+                curItem.expirationDate = expirationDate;
+                this.setState({curItem: curItem});
+              } 
             }}
           />
         </View>
       );
     }
     let popupAddButton = null;
-    if (this.state.newItem.itemName && this.state.newItem.purchaseDate && this.state.newItem.expirationDate) {
+    if (this.state.editingIndex === undefined && this.state.newItem.itemName && this.state.newItem.purchaseDate && this.state.newItem.expirationDate) {
       popupAddButton = (
         <Button
           style={styles.addItemButton}
@@ -151,8 +199,19 @@ export default class CompartmentPage extends React.Component {
             this.addItem();
           }}
         />
-      )
+      );
+    } else if (this.state.editingIndex !== undefined && this.state.curItem.itemName && this.state.curItem.purchaseDate && this.state.curItem.expirationDate) {
+      popupAddButton = (
+        <Button
+          style={styles.addItemButton}
+          title="Edit"
+          onPress={() => {
+            this.editItem();
+          }}
+        />
+      );
     }
+      
     let currentItemEntries = null;
     const currentList = this.state.currentItems;
     if (currentList) {
@@ -165,13 +224,12 @@ export default class CompartmentPage extends React.Component {
                 text: 'Edit',
                 color: '#FFFFFF',
                 backgroundColor: '#F99526',
-              },
-              {
-                text: 'Consume',
-                color: '#000000',
-                backgroundColor: '#A6E22E',
                 onPress: () => {
-                  this.deleteItem(index);
+                  this.setState({
+                    editingIndex: index,
+                    curItem: currentList[index],
+                  });
+                  this.popupDialog.show();
                 }
               },
               {

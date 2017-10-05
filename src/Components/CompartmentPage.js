@@ -222,8 +222,8 @@ export default class CompartmentPage extends React.Component {
             const swipeoutBtns = [
               {
                 text: 'Edit',
-                color: '#FFFFFF',
-                backgroundColor: '#F99526',
+                color: '#000000',
+                backgroundColor: '#E6DB74',
                 onPress: () => {
                   this.setState({
                     editingIndex: index,
@@ -254,10 +254,10 @@ export default class CompartmentPage extends React.Component {
             return (
               <Swipeout style={styles.currentItems} right={swipeoutBtns}>
                 <View>
-                  <Text> Item: {item.itemName} </Text>
-                  <Text> Purchase Date: {item.purchaseDate} </Text>
-                  <Text> Expiration Date: {item.expirationDate} </Text>
-                  <Text> {timeLeft} </Text>
+                  <Text style={styles.currentItemsItemNameText}>{item.itemName}</Text>
+                  <Text style={styles.currentItemsText}>Purchase Date: {item.purchaseDate} </Text>
+                  <Text style={styles.currentItemsText}>Expiration Date: {item.expirationDate} </Text>
+                  <Text style={styles.currentItemsText}> {timeLeft} </Text>
                   <TouchableOpacity
                     onPress={() => {this.deleteItem(index)}}
                   >
@@ -274,6 +274,9 @@ export default class CompartmentPage extends React.Component {
       <View style={styles.container}>
         <PopupDialog
           ref={(popupDialog) => { this.popupDialog = popupDialog; }}
+          onDismissed={() => {
+            this.setState({editingIndex: undefined});
+          }}
         >
           <View style={styles.popup}>
             {itemName}
@@ -302,16 +305,16 @@ export default class CompartmentPage extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#272822',
   },
   popup: {
     flex: 1,
     margin: 10,
-    zIndex: 1000
+    zIndex: 1000,
   },
   addItemButton: {
     position: 'absolute',
-    bottom: 0
+    bottom: 0,
   },
   datePicker: {
     width: 200,
@@ -320,12 +323,20 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     top: 4,
-    marginLeft: 0
+    marginLeft: 0,
   },
   dateInput: {
-    marginLeft: 36
+    marginLeft: 36,
   },
   currentItems: {
-    marginTop: 50,
+    marginTop: 30,
+    backgroundColor: '#272822',
   },
+  currentItemsItemNameText: {
+    color: '#FFF',
+    fontSize: 23,
+  },
+  currentItemsText: {
+    color: '#FFF'
+  }
 });

@@ -32,7 +32,7 @@ export default class MainPage extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#272822',
     alignItems: 'center',
     justifyContent: 'center',
     display: 'flex'
@@ -46,7 +46,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    fontSize: 26
+    color: '#FFF',
+    fontSize: 26,
   },
   counterTop: {
     flex: 1

@@ -251,17 +251,25 @@ export default class CompartmentPage extends React.Component {
             else if (diffDays < 0) {
               timeLeft = `Expired ${-diffDays} day(s) ago.`;
             }
+            let style = [styles.currentItemsEntry];
+            if (diffDays > 3) { 
+              style.push(styles.goodFormatContainer);
+            } else if (diffDays > 0) {
+              style.push(styles.okayFormatContainer);
+            } else {
+              style.push(styles.badFormatContainer);
+            };
             return (
               <Swipeout style={styles.currentItems} right={swipeoutBtns}>
-                <View>
+                <View style={style}>
                   <Text style={styles.currentItemsItemNameText}>{item.itemName}</Text>
-                  <Text style={styles.currentItemsText}>Purchase Date: {item.purchaseDate} </Text>
-                  <Text style={styles.currentItemsText}>Expiration Date: {item.expirationDate} </Text>
-                  <Text style={styles.currentItemsText}> {timeLeft} </Text>
+                  <Text style={styles.currentItemsText}>Purchase Date: {item.purchaseDate}</Text>
+                  <Text style={styles.currentItemsText}>Expiration Date: {item.expirationDate}</Text>
+                  <Text style={styles.currentItemsText}>{timeLeft}</Text>
                   <TouchableOpacity
                     onPress={() => {this.deleteItem(index)}}
                   >
-                    <Text>Consume</Text>
+                    <Text style={styles.consumeText}>Consume</Text>
                   </TouchableOpacity>
                 </View>
               </Swipeout>
@@ -270,6 +278,7 @@ export default class CompartmentPage extends React.Component {
         />
       );
     }
+
     return (
       <View style={styles.container}>
         <PopupDialog
@@ -336,7 +345,22 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 23,
   },
+  currentItemsEntry: {
+    padding: 8,
+  },
   currentItemsText: {
     color: '#FFF'
+  },
+  goodFormatContainer: {
+    backgroundColor: 'rgba(161,226,46,0.5)',
+  },
+  okayFormatContainer: {
+    backgroundColor: 'rgba(230,219,116,0.5)',
+  },
+  badFormatContainer: {
+    backgroundColor: 'rgba(249,38,114,0.5)',
+  },
+  consumeText: {
+    color: '#A4E22E',
   }
 });

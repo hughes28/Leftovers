@@ -29,6 +29,7 @@ export default class CompartmentPage extends React.Component {
       const currentItems = [...this.state.currentItems];
       currentItems.push(newItem);
       await AsyncStorage.setItem(title, JSON.stringify(currentItems));
+      this.props.navigation.state.params.refresh();
       this.popupDialog.dismiss();
       this.setState({
         newItem: {},
@@ -46,6 +47,7 @@ export default class CompartmentPage extends React.Component {
       const currentItems = [...this.state.currentItems];
       currentItems.splice(index, 1);
       await AsyncStorage.setItem(title, JSON.stringify(currentItems));
+      this.props.navigation.state.params.refresh();
       this.setState({
         newItem: {},
         currentItems: currentItems,
@@ -66,6 +68,7 @@ export default class CompartmentPage extends React.Component {
       curIndexData.purchaseDate = this.state.curItem.purchaseDate;
       curIndexData.expirationDate = this.state.curItem.expirationDate;
       await AsyncStorage.setItem(title, JSON.stringify(currentItems));
+      this.props.navigation.state.params.refresh();
       this.popupDialog.dismiss();
       this.setState({
         curItem: {},

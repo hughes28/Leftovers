@@ -8,26 +8,14 @@ export default class AppNavigator extends React.Component {
     const AppNavigator = StackNavigator(AppRoutes, {
       initialRouteName: AppRoutes.mainPage.key,
       navigationOptions: {
-        title: 'Leftovers',
-        headerTitleStyle: {
-          color: '#FFF',
-        },
-        headerTintColor: '#FFF',
-        headerStyle: {
-          justifyContent: 'center',
-        },
-      },
+          headerMode: 'screen',
+          header: null
+      }
+
     });
     return (
-      <AppNavigator style={styles.titleBar} />
+      <AppNavigator  />
     );
   }
 }
 
-const styles = StyleSheet.create({
-  titleBar: {
-      backgroundColor: '#161714',
-      marginTop: Platform.OS === 'ios' ? 0 : 11,
-      height: 60,
-  },
-});

@@ -3,10 +3,10 @@ import { AsyncStorage, ScrollView, StyleSheet, Text, TouchableOpacity, View } fr
 import AppRoutes from '../Routes/AppRoutes';
 
 export default class CompartmentButton extends React.Component {
-  
+
   constructor(props) {
     super(props);
-    
+
     this.state = {
       itemsInCompartment: 0,
       expiredItems: 0,
@@ -33,7 +33,7 @@ export default class CompartmentButton extends React.Component {
           let numberOfDays = currentItems[i];
           const date2 = new Date(currentItems[i].expirationDate);
           let diffDays = Math.floor((date2.getTime() - date1.getTime())/(24*3600*1000))+1;
-          if (diffDays < 0) { 
+          if (diffDays < 0) {
             expiredItems++;
           } else if (diffDays < 3) {
             closeToExpirationItems++;
@@ -61,12 +61,11 @@ export default class CompartmentButton extends React.Component {
     const theExpiredItems = this.state.expiredItems;
 
     return (
-      <TouchableOpacity 
+      <TouchableOpacity
         style={[styles.button, styles.compartmentStyle]}
         onPress={() => {this.props.navigation.navigate(AppRoutes.compartmentPage.key, {compartment: this.props.compartmentName, refresh: this.refresh.bind(this)})}}
       >
-        <Text style={styles.buttonText}>{this.props.compartmentName}</Text>
-        <Text style={styles.itemComponentButtonText}>{currentItemsInComponent} item(s)</Text>
+        <Text style={[styles.buttonText, styles.buttonColorNormal]}>{this.props.compartmentName} ({currentItemsInComponent})</Text>
         <Text style={styles.itemComponentButtonText}>{theCloseToExpiringItems} item(s) are close to expiring.</Text>
         <Text style={styles.itemComponentButtonText}>{theExpiredItems} item(s) have expired.</Text>
       </TouchableOpacity>
@@ -84,8 +83,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    color: '#FFF',
     fontSize: 26,
+  },
+  buttonColorNormal: {
+    color: '#FFF',
+  },
+  buttonColorWarning: {
+    color: '#FFF',
+  },
+  buttonColorError: {
+    color: '#FFF',
   },
   compartmentStyle: {
     flex: 1

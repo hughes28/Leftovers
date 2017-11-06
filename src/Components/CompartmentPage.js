@@ -17,10 +17,6 @@ export default class CompartmentPage extends React.Component {
     }
   }
 
-  static navigationOptions = ({ navigation }) => ({
-    title: `${navigation.state.params.compartment}`,
-  });
-
   async addItem() {
     try {
       const title = this.props.navigation.state.params.compartment;
@@ -111,7 +107,7 @@ export default class CompartmentPage extends React.Component {
               const curItem = {...this.state.curItem}; // notation for clone
               curItem.itemName = itemName;
               this.setState({curItem: curItem});
-            } 
+            }
           }}
           value={
             this.state.editingIndex === undefined ? this.state.newItem.itemName : this.state.curItem.itemName
@@ -148,7 +144,7 @@ export default class CompartmentPage extends React.Component {
               const curItem = {...this.state.curItem}; // notation for clone
               curItem.purchaseDate = purchaseDate;
               this.setState({curItem: curItem});
-            } 
+            }
           }}
         />
       </View>
@@ -186,7 +182,7 @@ export default class CompartmentPage extends React.Component {
                 const curItem = {...this.state.curItem}; // notation for clone
                 curItem.expirationDate = expirationDate;
                 this.setState({curItem: curItem});
-              } 
+              }
             }}
           />
         </View>
@@ -214,7 +210,7 @@ export default class CompartmentPage extends React.Component {
         />
       );
     }
-      
+
     let currentItemEntries = null;
     const currentList = this.state.currentItems;
     if (currentList) {
@@ -255,12 +251,12 @@ export default class CompartmentPage extends React.Component {
               timeLeft = `Expired ${-diffDays} day(s) ago.`;
             }
             let style = [styles.currentItemsEntry];
-            if (diffDays > 3) { 
-              style.push(styles.goodFormatContainer);
+            if (diffDays > 3) {
+              style.push(styles.normal);
             } else if (diffDays > 0) {
-              style.push(styles.okayFormatContainer);
+              style.push(styles.warning);
             } else {
-              style.push(styles.badFormatContainer);
+              style.push(styles.error);
             };
             return (
               <Swipeout style={styles.currentItems} right={swipeoutBtns}>
@@ -354,13 +350,13 @@ const styles = StyleSheet.create({
   currentItemsText: {
     color: '#FFF'
   },
-  goodFormatContainer: {
+  normal: {
     backgroundColor: 'rgba(161,226,46,0.5)',
   },
-  okayFormatContainer: {
+  warning: {
     backgroundColor: 'rgba(230,219,116,0.5)',
   },
-  badFormatContainer: {
+  error: {
     backgroundColor: 'rgba(249,38,114,0.5)',
   },
   consumeText: {

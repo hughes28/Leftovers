@@ -1,4 +1,5 @@
 export default images = {
-	freezer: require('./Assets/freezer.png'),
-	fridge: require('./Assets/fridge.png'),
+	caution: require('./Assets/caution.png'),
+	checkmark: require('./Assets/checkmark.png'),
+	error: require('./Assets/error.png'),
 };

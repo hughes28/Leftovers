@@ -11,9 +11,9 @@ export default class MainPage extends React.Component {
         <StatusBar
             barStyle="light-content"
         />
-        <CompartmentButton navigation={this.props.navigation} compartmentName="Freezer"/>
-        <CompartmentButton navigation={this.props.navigation} compartmentName="Refrigerator"/>
-        <CompartmentButton navigation={this.props.navigation} compartmentName="Counter Top"/>
+        <CompartmentButton style={styles.mainButton} navigation={this.props.navigation} compartmentName="Freezer"/>
+        <CompartmentButton style={styles.mainButton} navigation={this.props.navigation} compartmentName="Refrigerator"/>
+        <CompartmentButton style={styles.mainButton} navigation={this.props.navigation} compartmentName="Counter Top"/>
       </View>
     );
   }
@@ -23,8 +23,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#272822',
-    alignItems: 'center',
-    justifyContent: 'center',
     display: 'flex'
   },
+  mainButton: {
+    flex: 1
+  }
 });
+

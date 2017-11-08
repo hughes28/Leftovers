@@ -1,6 +1,7 @@
 import React from 'react';
-import { AsyncStorage, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { AsyncStorage, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import AppRoutes from '../Routes/AppRoutes';
+import images from '../images.js';
 
 export default class CompartmentButton extends React.Component {
 
@@ -8,9 +9,9 @@ export default class CompartmentButton extends React.Component {
     super(props);
 
     this.state = {
-      itemsInCompartment: 0,
-      expiredItems: 0,
-      closeToExpirationItems: 0,
+      numItemsInCompartment: 0,
+      numExpiredItems: 0,
+      numCloseToExpirationItems: 0,
     }
   }
 
@@ -22,28 +23,32 @@ export default class CompartmentButton extends React.Component {
     try {
       const title = this.props.compartmentName;
       const value = await AsyncStorage.getItem(title);
+      let numCloseToExpirationItems = 0;
+      let numExpiredItems = 0;
+      let numNormalItems = 0;
+      let numItemsInCompartment = 0;
+
       if (value !== null) {
         // We have data!!
         const currentItems = JSON.parse(value);
         const date1 = new Date();
-        const itemsInCompartment = currentItems.length;
-        let closeToExpirationItems = 0;
-        let expiredItems = 0;
+        numItemsInCompartment = currentItems.length;
+
         for (let i=0; i<currentItems.length; i++) {
           let numberOfDays = currentItems[i];
           const date2 = new Date(currentItems[i].expirationDate);
           let diffDays = Math.floor((date2.getTime() - date1.getTime())/(24*3600*1000))+1;
           if (diffDays < 0) {
-            expiredItems++;
+            numExpiredItems++;
           } else if (diffDays < 3) {
-            closeToExpirationItems++;
+            numCloseToExpirationItems++;
+          } else {
+            numNormalItems++;
           }
         }
         console.log(value);
-        this.setState({itemsInCompartment});
-        this.setState({closeToExpirationItems});
-        this.setState({expiredItems});
       }
+      this.setState({numItemsInCompartment, numCloseToExpirationItems, numExpiredItems, numNormalItems});
     } catch (error) {
       // Error retrieving data
       throw error;
@@ -56,18 +61,40 @@ export default class CompartmentButton extends React.Component {
 
   render() {
 
-    const currentItemsInComponent = this.state.itemsInCompartment;
-    const theCloseToExpiringItems = this.state.closeToExpirationItems;
-    const theExpiredItems = this.state.expiredItems;
+    const { numItemsInCompartment, numCloseToExpirationItems, numExpiredItems, numNormalItems } = this.state;
 
     return (
       <TouchableOpacity
         style={[styles.button, styles.compartmentStyle]}
         onPress={() => {this.props.navigation.navigate(AppRoutes.compartmentPage.key, {compartment: this.props.compartmentName, refresh: this.refresh.bind(this)})}}
       >
-        <Text style={[styles.buttonText, styles.buttonColorNormal]}>{this.props.compartmentName} ({currentItemsInComponent})</Text>
-        <Text style={styles.itemComponentButtonText}>{theCloseToExpiringItems} item(s) are close to expiring.</Text>
-        <Text style={styles.itemComponentButtonText}>{theExpiredItems} item(s) have expired.</Text>
+        <View style={styles.compartmentTextContainer}>
+          <Text style={[styles.buttonText, styles.buttonColorNormal]}>{this.props.compartmentName} ({numItemsInCompartment})</Text>
+        </View>
+        <View style={styles.statusImagesContainer}>
+          <View>
+            <Image
+              style={styles.imageStyle}
+              source={images.checkmark}
+            />
+            <Text style={styles.itemComponentButtonText}>{numNormalItems}</Text>
+          </View>
+          <View style={styles.statusImageCenterContainer}>
+            <Image
+              style={styles.imageStyle}
+              source={images.caution}
+            />
+            <Text style={styles.itemComponentButtonText}>{numCloseToExpirationItems}</Text>
+          </View>
+          <View>
+            <Image
+              style={styles.imageStyle}
+              source={images.error}
+            />
+            <Text style={styles.itemComponentButtonText}>{numExpiredItems}</Text>
+          </View>
+        </View>
+
       </TouchableOpacity>
     );
   }
@@ -80,7 +107,7 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderColor: 'black',
     alignSelf: 'stretch',
-    alignItems: 'center',
+
   },
   buttonText: {
     fontSize: 26,
@@ -97,7 +124,30 @@ const styles = StyleSheet.create({
   compartmentStyle: {
     flex: 1
   },
+  compartmentTextContainer: {
+    flex: 1,
+    justifyContent:'flex-end',
+    alignItems: 'center',
+  },
+  imageStyle: {
+    width: 35,
+    height: 35, 
+    resizeMode: 'contain'
+  },
   itemComponentButtonText: {
+    color: 'white',
+    textAlign: 'center'
 
   },
+  statusImagesContainer: {
+    flex:2,
+    flexDirection:'row',
+    alignItems:'center',
+    justifyContent:'center',
+
+  },
+  statusImageCenterContainer: {
+    marginLeft:35,
+    marginRight:35,
+  }
 });

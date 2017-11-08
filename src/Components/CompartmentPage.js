@@ -1,8 +1,9 @@
 import React from 'react';
-import { AsyncStorage, Button, FlatList, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { AsyncStorage, Button, FlatList, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import PopupDialog from 'react-native-popup-dialog';
 import Swipeout from 'react-native-swipeout';
 import DatePicker from 'react-native-datepicker';
+import images from '../images.js';
 
 export default class CompartmentPage extends React.Component {
 
@@ -250,26 +251,33 @@ export default class CompartmentPage extends React.Component {
             else if (diffDays < 0) {
               timeLeft = `Expired ${-diffDays} day(s) ago.`;
             }
-            let style = [styles.currentItemsEntry];
+            let statusStyle = [styles.currentItemsEntry];
             if (diffDays > 3) {
-              style.push(styles.normal);
+              statusStyle.push(styles.normal);
             } else if (diffDays > 0) {
-              style.push(styles.warning);
+              statusStyle.push(styles.warning);
             } else {
-              style.push(styles.error);
+              statusStyle.push(styles.error);
             };
             return (
               <Swipeout style={styles.currentItems} right={swipeoutBtns}>
-                <View style={style}>
-                  <Text style={styles.currentItemsItemNameText}>{item.itemName}</Text>
-                  <Text style={styles.currentItemsText}>Purchase Date: {item.purchaseDate}</Text>
-                  <Text style={styles.currentItemsText}>Expiration Date: {item.expirationDate}</Text>
-                  <Text style={styles.currentItemsText}>{timeLeft}</Text>
-                  <TouchableOpacity
-                    onPress={() => {this.deleteItem(index)}}
-                  >
-                    <Text style={styles.consumeText}>Consume</Text>
-                  </TouchableOpacity>
+                <View style={statusStyle}>
+                  <View style={{flex: 4}}>
+                    <Text style={styles.currentItemsItemNameText}>{item.itemName}</Text>
+                    <Text style={styles.currentItemsText}>Purchase Date: {item.purchaseDate}</Text>
+                    <Text style={styles.currentItemsText}>Expiration Date: {item.expirationDate}</Text>
+                    <Text style={styles.currentItemsText}>{timeLeft}</Text>
+                  </View>
+                  <View style={styles.consumeBtnContainer}>
+                    <TouchableOpacity
+                      onPress={() => {this.deleteItem(index)}}
+                    >
+                      <Image
+                        style={styles.imageStyle}
+                        source={images.checkmark}
+                      />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </Swipeout>
             );
@@ -338,7 +346,9 @@ const styles = StyleSheet.create({
   },
   currentItems: {
     marginTop: 30,
+    flex: 1,
     backgroundColor: '#272822',
+    alignItems:'center',
   },
   currentItemsItemNameText: {
     color: '#FFF',
@@ -346,6 +356,8 @@ const styles = StyleSheet.create({
   },
   currentItemsEntry: {
     padding: 8,
+    width: '100%',
+    flexDirection: 'row',
   },
   currentItemsText: {
     color: '#FFF'
@@ -361,5 +373,18 @@ const styles = StyleSheet.create({
   },
   consumeText: {
     color: '#A4E22E',
+
+  },
+  imageStyle: {
+    width: 60,
+    height: 60, 
+    resizeMode: 'contain'
+  },
+  consumeBtnContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    display: 'flex',
+    flex: 1
   }
 });

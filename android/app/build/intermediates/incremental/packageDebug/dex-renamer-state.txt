@@ -1,0 +1,4 @@
+#Wed Nov 08 22:10:45 PST 2017
+base.0=C\:\\Users\\hughe\\Desktop\\Leftovers\\android\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\1f\\main
+renamed.0=classes.dex
+file.0=C\:\\Users\\hughe\\Desktop\\Leftovers\\android\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\1f\\main\\classes.dex

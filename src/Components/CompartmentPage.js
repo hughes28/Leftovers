@@ -322,6 +322,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#272822',
+    paddingTop: 23,
   },
   popup: {
     flex: 1,
@@ -345,10 +346,10 @@ const styles = StyleSheet.create({
     marginLeft: 36,
   },
   currentItems: {
-    marginTop: 30,
     flex: 1,
     backgroundColor: '#272822',
     alignItems:'center',
+    paddingTop: 1,
   },
   currentItemsItemNameText: {
     color: '#FFF',
@@ -376,8 +377,8 @@ const styles = StyleSheet.create({
 
   },
   imageStyle: {
-    width: 60,
-    height: 60, 
+    width: 30,
+    height: 30, 
     resizeMode: 'contain'
   },
   consumeBtnContainer: {

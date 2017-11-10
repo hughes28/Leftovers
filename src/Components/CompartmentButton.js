@@ -66,7 +66,13 @@ export default class CompartmentButton extends React.Component {
     return (
       <TouchableOpacity
         style={[styles.button, styles.compartmentStyle]}
-        onPress={() => {this.props.navigation.navigate(AppRoutes.compartmentPage.key, {compartment: this.props.compartmentName, refresh: this.refresh.bind(this)})}}
+        onPress={() => {
+          this.props.navigation.navigate(AppRoutes.compartmentPage.key, 
+            {
+              compartment: this.props.compartmentName, 
+              refresh: this.refresh.bind(this)
+            })}
+        }
       >
         <View style={styles.compartmentTextContainer}>
           <Text style={[styles.buttonText, styles.buttonColorNormal]}>{this.props.compartmentName} ({numItemsInCompartment})</Text>

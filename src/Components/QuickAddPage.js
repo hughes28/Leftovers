@@ -1,6 +1,7 @@
 import React from 'react';
 import { FlatList, Keyboard, StatusBar, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Swiper from 'react-native-swiper';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 export default class QuickAddPage extends React.Component {
 
@@ -9,12 +10,14 @@ constructor(props) {
     this.state = {
       itemName: '',
       category: '',
+      visible: false,
     }
   }
 
   render() {
     return (
       <View style={styles.container}>
+         <Spinner visible={this.state.visible} textStyle={{color: '#FFF'}} />
         <StatusBar
             barStyle="light-content"
         />
@@ -53,7 +56,29 @@ constructor(props) {
                   this.nameInput.blur();
                   this.categoryInput.blur();
                   Keyboard.dismiss();
-                  this.swiper.scrollBy(1);
+                  this.setState({visible: true});
+                  fetch("http://www.stilltasty.com/searchitems/search", {
+                    method: 'POST',
+                    headers: {
+                      'Accept': 'application/json',
+                      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                      'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36',
+                      'Referer': 'http://www.stilltasty.com/',
+                      'Origin': 'http://www.stilltasty.com',
+                    },
+                    body: JSON.stringify({'search': this.state.category})
+                  })
+                  .then((response) => {
+                    if (response.status === 200) {
+                      this.setState({bodyText: JSON.parse(response._bodyText), bodyInit: JSON.parse(response._bodyInit)});
+                      this.swiper.scrollBy(1);
+                       this.setState({visible: false});
+                    } else {
+                       this.setState({visible: false});
+                      Alert.alert(response);
+                    }
+                  });
+                  
                 }
               }}
             >
